@@ -1,0 +1,23 @@
+.App {
+  height: 100%;
+}
+
+.Card {
+  position: fixed;
+  top: 25%;
+  left: 25%;
+  height: 25%;
+  width: 50%;
+}
+
+.SearchFrom {
+  position: fixed;
+  left: 45%;
+  margin-top: 2%;
+  width: 25%;
+}
+
+.SearchCol {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
