@@ -2,13 +2,25 @@ import "./App.css";
 import React from "react";
 import { Card, Button } from "react-bootstrap";
 import SearchFrom from "./Componets/SearchFrom";
+import dotenv from "dotenv";
+import { getStock, getStockList } from "./handlers/Stock-Handler";
+
+dotenv.config({
+  path: "./.env",
+});
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       searchText: "",
+      stockList: [],
     };
+  }
+
+  async componentDidMount() {
+    let stockList = await getStockList();
+    console.log(stockList);
   }
 
   handleSearchTextChange = (event) => {
@@ -17,9 +29,12 @@ export default class App extends React.Component {
     });
   };
 
-  handleSearchSubmit = (event) => {
+  handleSearchSubmit = async (event) => {
     event.stopPropagation();
     event.preventDefault();
+    console.log("stock");
+    let stock = await getStock();
+    console.log(stock);
   };
 
   render() {
