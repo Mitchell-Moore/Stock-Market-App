@@ -2,8 +2,13 @@ import "./App.css";
 import React from "react";
 import { Card, Button } from "react-bootstrap";
 import SearchFrom from "./Componets/SearchFrom";
+import Chart from "./Componets/Chart";
 import dotenv from "dotenv";
-import { getStock, getStockList } from "./handlers/Stock-Handler";
+import {
+  getStock,
+  getStockList,
+  getAllStockList,
+} from "./handlers/Stock-Handler";
 
 dotenv.config({
   path: "./.env",
@@ -13,47 +18,67 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchText: "",
       stockList: [],
+      completeStockList: [],
+      stock: "",
+      result: [],
     };
   }
 
   async componentDidMount() {
-    let stockList = await getStockList();
-    console.log(stockList);
+    let completeStockList = await getAllStockList();
+    this.setState({
+      completeStockList,
+      stockList: completeStockList,
+    });
   }
 
-  handleSearchTextChange = (event) => {
-    this.setState({
-      title: event.target.value,
-    });
+  handleSearchTextChange = async (event) => {
+    if (event.target.value.length != 0) {
+      let stockList = await getStockList(event.target.value);
+      this.setState({
+        stockList,
+      });
+    } else {
+      let stockList = this.state.completeStockList;
+      this.setState({
+        stockList,
+      });
+    }
   };
 
   handleSearchSubmit = async (event) => {
     event.stopPropagation();
     event.preventDefault();
-    console.log("stock");
-    let stock = await getStock();
-    console.log(stock);
+    let result = await getStock(this.state.stock);
+    this.setState({
+        result,
+      });
+    console.log(result);
+  };
+
+  handleAutocompleteChange = (event, values) => {
+    this.setState({
+      stock: values,
+    });
   };
 
   render() {
+    console.log(this.state.result.length);
     return (
       <div className="App">
         <SearchFrom
           handleSearchTextChange={this.handleSearchTextChange}
           handleSearchSubmit={this.handleSearchSubmit}
+          stockList={this.state.stockList}
+          handleAutocompleteChange={this.handleAutocompleteChange}
         ></SearchFrom>
-        <Card className="Card">
+       {this.state.result.length > 0 ? <Card className="Card">
           <Card.Body>
             <Card.Title>Card Title</Card.Title>
-            <Card.Text>
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </Card.Text>
-            <Button variant="primary">Go somewhere</Button>
+            <Chart data={this.state.result}/>
           </Card.Body>
-        </Card>
+        </Card>: null}
       </div>
     );
   }

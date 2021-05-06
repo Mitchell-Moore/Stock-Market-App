@@ -11,9 +11,13 @@ fs.createReadStream(csvPath)
   })
   .on("end", () => {});
 
-const processData = (data) => {
-  console.log(data);
-  return data;
+const processData = (quotes, symbol) => {
+  let dataArr = [];
+  quotes.forEach( obj => {
+    dataArr.push({x: obj.date, y: obj.adjClose});
+  });
+  let arr = [{id: symbol, data: dataArr}]
+  return arr;
 };
 
 const autoCompleteStock = (query) => {
@@ -32,4 +36,8 @@ const autoCompleteStock = (query) => {
   return searchResultArr;
 };
 
-module.exports = { processData, autoCompleteStock };
+const getAllStockList = () => {
+  return stockArr;
+};
+
+module.exports = { processData, autoCompleteStock, getAllStockList };
